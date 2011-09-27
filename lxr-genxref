@@ -42,7 +42,7 @@ use Encode;
 $SIG{'INT'}  = sub { die "\nSIGINT: $$: please wait, flushing caches...\n"; };
 $SIG{'QUIT'} = sub { die "\nSIGQUIT: $$: please wait, flushing caches...\n"; };
 $SIG{'TERM'} = sub { die "\nSIGTERM: $$: please wait, flushing caches...\n"; };
-$SIG{'PIPE'} = sub { die "\nSIGTERM: $$: please wait, flushing caches...\n"; };
+$SIG{'PIPE'} = sub { die "\nSIGPIPE: $$: please wait, flushing caches...\n"; };
 $SIG{'USR1'} = \&memory_status;
 
 autoflush STDOUT 1;
@@ -174,7 +174,7 @@ sub index_file($$) {
     return 0 unless $index->to_index($fileid);
     return 1 unless $lang->doindex();
 
-    warn("--- indexing    ".$file->name." [".$file->revision."]\n");
+    #warn("--- indexing    ".$file->name." [".$file->revision."]\n");
 
     my $add_ident = make_add_ident($fileid);
     return $lang->index_file($context, $file, $add_ident)
@@ -233,7 +233,7 @@ sub reference_file($$$) {
     my $parse = new LXRng::Parse::Simple($handle, 8,
 					 @{$lang->parsespec});
 
-    warn("--- referencing ".$file->name." [".$file->revision."]\n");
+    #warn("--- referencing ".$file->name." [".$file->revision."]\n");
 
     my $reserved = $lang->reserved();
     my $re = $lang->identifier_re();
@@ -300,7 +300,7 @@ sub hash_file($$$) {
 	    return 0;
 	}
 
-	warn("--- hashing     ".$file->name." [".$file->revision."]\n");
+	#warn("--- hashing     ".$file->name." [".$file->revision."]\n");
 	my $doc = $hash->new_document($file->name);
 	my $charset = $context->config->{'content_charset'} || [];
 	$charset = [ref($charset) eq 'ARRAY' ? @$charset : $charset];
@@ -333,6 +333,7 @@ sub hash_file($$$) {
 	    $index->to_reference($fileid);
 	    return 0;
 	}
+	#warn("here $docid\n");
 	my $doc = $hash->get_document($docid);
 	if (reference_file($file, $fileid, $doc)) {
 	    $hash->save_document($docid, $doc);

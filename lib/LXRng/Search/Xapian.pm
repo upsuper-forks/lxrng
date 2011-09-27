@@ -81,7 +81,8 @@ sub add_document {
     }
     my $doc_id = $self->wrdb->add_document($doc);
     $self->{'writes'}++;
-    $self->flush() if $self->{'writes'} % 3271 == 0;
+    #$self->flush() if $self->{'writes'} % 3271 == 0;
+    $self->flush() if $self->{'writes'} % 297 == 0;
     return $doc_id;
 }
 
@@ -205,8 +206,8 @@ sub search {
 	my $hits = 0;
 	while ($term ne $termend) {
 	    if ($term !~ /^__\@\@rel/) {
-		my $pos = $db->positionlist_begin($match->get_docid(), $term);
-		my $posend = $db->positionlist_end($match->get_docid(), $term);
+		my $pos = $db->positionlist_begin($match->get_docid(), $term->get_termname());
+		my $posend = $db->positionlist_end($match->get_docid(), $term->get_termname());
 		while ($pos ne $posend) {
 		    $lines{int($pos/100)}{$term} = 1;
 		    $hits++;
